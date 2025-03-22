@@ -1,0 +1,23 @@
+package com.diffusion4812.receipttracker.data
+
+import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.PrimaryKey
+
+@Entity(
+    tableName = "receipts",
+    foreignKeys = [ForeignKey(
+        entity = ExpenseClaim::class,
+        parentColumns = ["claimId"],
+        childColumns = ["claimId"],
+        onDelete = ForeignKey.CASCADE // This will delete the receipt if the claim is deleted
+    )]
+)
+data class Receipt(
+    @PrimaryKey(autoGenerate = true) val receiptId: Int = 0,
+    val claimId: Int,
+    val receiptDate: Long,
+    val receiptDescription: String,
+    val receiptAmount: Double,
+    val imagePath: String
+)
