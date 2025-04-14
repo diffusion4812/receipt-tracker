@@ -7,9 +7,9 @@ import androidx.room.PrimaryKey
 @Entity(
     tableName = "receipts",
     foreignKeys = [ForeignKey(
-        entity = ExpenseClaim::class,
-        parentColumns = ["claimId"],
-        childColumns = ["claimId"],
+        entity = Receipt::class,
+        parentColumns = ["receiptId"],
+        childColumns = ["receiptId"],
         onDelete = ForeignKey.CASCADE // This will delete the receipt if the claim is deleted
     )]
 )

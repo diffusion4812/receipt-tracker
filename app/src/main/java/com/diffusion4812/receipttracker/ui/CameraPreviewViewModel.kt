@@ -1,43 +1,39 @@
 package com.diffusion4812.receipttracker.ui
 
 import android.annotation.SuppressLint
-import android.app.Application
-import android.content.ContentValues
 import android.content.ContentResolver
+import android.content.ContentValues
 import android.content.Context
 import android.net.Uri
+import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import androidx.camera.core.CameraControl
 import androidx.camera.core.CameraSelector.DEFAULT_BACK_CAMERA
 import androidx.camera.core.FocusMeteringAction
+import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCapture.OutputFileOptions
+import androidx.camera.core.Preview
 import androidx.camera.core.SurfaceOrientedMeteringPointFactory
 import androidx.camera.core.SurfaceRequest
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.lifecycle.awaitInstance
 import androidx.compose.ui.geometry.Offset
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
-import androidx.camera.core.ImageCapture
-import androidx.camera.core.Preview
-
-import android.os.Environment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.diffusion4812.receipttracker.data.Receipt
 import com.diffusion4812.receipttracker.data.ReceiptRepository
+import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.MutableSharedFlow
-import android.util.Log
-import androidx.camera.core.ImageCapture.OutputFileOptions
-import java.io.File
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-
+import java.io.File
 
 class CameraPreviewViewModel(private val receiptRepository: ReceiptRepository) : ViewModel() {
     // Used to set up a link between the Camera and your UI.
@@ -103,9 +99,6 @@ class CameraPreviewViewModel(private val receiptRepository: ReceiptRepository) :
         Log.d("CameraPreviewViewModel", "opening photo check dir ${outputDir?.exists()}")
         Log.d("CameraPreviewViewModel", "opening photo check length ${outputDir?.listFiles()?.size}")
 
-
-
-
         val onImageSavedCallback = object : ImageCapture.OnImageSavedCallback {
             override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
                 val savedUri = outputFileResults.savedUri
@@ -114,7 +107,6 @@ class CameraPreviewViewModel(private val receiptRepository: ReceiptRepository) :
                 val message = "Image saved to: ${savedUri?.toString() ?: "Unknown URI"}, location: $outputDirectory"
                 viewModelScope.launch {
                     Log.d("CameraPreviewViewModel", message)
-
 
                     outputFileResults.savedUri?.let { uri ->
                         _imageCaptured.tryEmit(uri)
@@ -126,18 +118,6 @@ class CameraPreviewViewModel(private val receiptRepository: ReceiptRepository) :
                             imagePath = uri.toString()
                         )
                         receiptRepository.insert(receipt)
-                    }
-                }
-                outputDir?.listFiles()?.forEach { file ->
-                    val filePath = file.absolutePath
-                    val fileUri = Uri.fromFile(file)
-
-                    try {
-                        resolver.openInputStream(fileUri)?.use { inputStream ->
-                            Log.d("CameraPreviewViewModel", "File ${file.name} opened successfully from $filePath, can read ${inputStream.available()}")
-                        }
-                    } catch (e: Exception) {
-                        Log.e("CameraPreviewViewModel", "Error opening file $filePath", e)
                     }
                 }
             }

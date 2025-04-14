@@ -13,6 +13,4 @@ class ReceiptViewModel(private val receiptRepository: ReceiptRepository) : ViewM
             receiptRepository.insert(receipt)
         }
     }
-
-    // ... other functions to get, update, delete receipts ...
 }
