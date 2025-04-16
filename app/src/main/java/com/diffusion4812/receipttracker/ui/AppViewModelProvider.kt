@@ -6,9 +6,6 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.diffusion4812.receipttracker.ReceiptTrackerApplication
 
-/**
- * Provides Factory to create instance of ViewModel for the entire Inventory app
- */
 object AppViewModelProvider {
     val Factory = viewModelFactory {
         initializer {

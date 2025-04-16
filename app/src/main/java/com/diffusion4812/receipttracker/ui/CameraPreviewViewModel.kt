@@ -2,11 +2,9 @@ package com.diffusion4812.receipttracker.ui
 
 import android.annotation.SuppressLint
 import android.content.ContentResolver
-import android.content.ContentValues
 import android.content.Context
 import android.net.Uri
 import android.os.Environment
-import android.provider.MediaStore
 import android.util.Log
 import androidx.camera.core.CameraControl
 import androidx.camera.core.CameraSelector.DEFAULT_BACK_CAMERA
@@ -26,6 +24,7 @@ import androidx.lifecycle.viewModelScope
 import com.diffusion4812.receipttracker.data.Receipt
 import com.diffusion4812.receipttracker.data.ReceiptRepository
 import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -34,6 +33,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.File
+import kotlin.time.Duration.Companion.seconds
 
 class CameraPreviewViewModel(private val receiptRepository: ReceiptRepository) : ViewModel() {
     // Used to set up a link between the Camera and your UI.
@@ -83,17 +83,15 @@ class CameraPreviewViewModel(private val receiptRepository: ReceiptRepository) :
         }
         val file = File(imageDir, fileName)
         val outputOptions = OutputFileOptions.Builder(file).build()
-       // Define the location where the image should be stored (pictures directory)
 
-       val contentValues = ContentValues().apply {
-           put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
-           put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
-       }
        Log.d("CameraPreviewViewModel", "Before taking photo, check directory exists:${imageDir.exists()}")
        imageCapture?.takePicture(outputOptions, ContextCompat.getMainExecutor(appContext), onImageSavedCallback)
     }
 
-    fun takePhoto(appContext: Context){
+    fun takePhoto(
+        onNavigateToHomeScreen : () ->Unit,
+        appContext: Context
+    ){
         val resolver = appContext.contentResolver
         val outputDir = appContext.getExternalFilesDir(null)
         Log.d("CameraPreviewViewModel", "opening photo check dir ${outputDir?.exists()}")
@@ -108,6 +106,8 @@ class CameraPreviewViewModel(private val receiptRepository: ReceiptRepository) :
                 viewModelScope.launch {
                     Log.d("CameraPreviewViewModel", message)
 
+                    delay(5.seconds)
+
                     outputFileResults.savedUri?.let { uri ->
                         _imageCaptured.tryEmit(uri)
                         val receipt = Receipt(
@@ -119,7 +119,7 @@ class CameraPreviewViewModel(private val receiptRepository: ReceiptRepository) :
                         )
                         receiptRepository.insert(receipt)
                     }
-                }
+                }.also { onNavigateToHomeScreen() }
             }
             override fun onError(exception: androidx.camera.core.ImageCaptureException) {}
         }

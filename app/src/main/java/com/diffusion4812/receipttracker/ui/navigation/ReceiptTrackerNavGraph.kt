@@ -2,9 +2,11 @@ package com.diffusion4812.receipttracker.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.diffusion4812.receipttracker.ui.AppViewModelProvider
 import com.diffusion4812.receipttracker.ui.CameraPreviewDestination
 import com.diffusion4812.receipttracker.ui.CameraPreviewScreen
 import com.diffusion4812.receipttracker.ui.HomeDestination
@@ -26,7 +28,14 @@ fun ReceiptTrackerNavHost(
             })
         }
         composable(route = CameraPreviewDestination.route) {
-            CameraPreviewScreen()
+            CameraPreviewScreen(
+                onNavigateToHomeScreen = {
+                    navController.navigate(
+                        route = HomeDestination.route
+                    )
+                },
+                viewModel = viewModel(factory = AppViewModelProvider.Factory)
+            )
         }
     }
 }

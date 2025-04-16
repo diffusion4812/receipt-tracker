@@ -42,7 +42,6 @@ import androidx.compose.ui.unit.round
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.diffusion4812.receipttracker.R
 import com.diffusion4812.receipttracker.ui.navigation.NavigationDestination
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -58,8 +57,9 @@ object CameraPreviewDestination : NavigationDestination {
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun CameraPreviewScreen(
-    modifier: Modifier = Modifier,
-    viewModel: CameraPreviewViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    onNavigateToHomeScreen : () -> Unit,
+    viewModel: CameraPreviewViewModel,
+    modifier: Modifier = Modifier
 ) {
     val permissionState = rememberMultiplePermissionsState(
         listOf(
@@ -67,7 +67,10 @@ fun CameraPreviewScreen(
         )
     )
     if (permissionState.allPermissionsGranted) {
-        CameraPreviewContent(viewModel, modifier)
+        CameraPreviewContent(
+            onNavigateToHomeScreen = onNavigateToHomeScreen,
+            viewModel,
+            modifier)
     } else {
 
         Column(
@@ -101,6 +104,7 @@ fun CameraPreviewScreen(
 
 @Composable
 fun CameraPreviewContent(
+    onNavigateToHomeScreen: () -> Unit,
     viewModel: CameraPreviewViewModel,
     modifier: Modifier = Modifier,
     lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
@@ -165,7 +169,10 @@ fun CameraPreviewContent(
                 Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                     Button(
                         onClick = {
-                            viewModel.takePhoto(appContext = context.applicationContext)
+                            viewModel.takePhoto(
+                                onNavigateToHomeScreen,
+                                context.applicationContext
+                            )
                         }
                     ) {
                         Text("Take Photo")

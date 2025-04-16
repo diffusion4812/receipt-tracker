@@ -19,7 +19,9 @@ import com.diffusion4812.receipttracker.ui.navigation.ReceiptTrackerNavHost
  */
 @Composable
 fun ReceiptTrackerApp(navController: NavHostController = rememberNavController()) {
-    ReceiptTrackerNavHost(navController = navController)
+    ReceiptTrackerNavHost(
+        navController = navController
+    )
 }
 
 /**

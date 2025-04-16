@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.diffusion4812.receipttracker.data.Receipt
 import com.diffusion4812.receipttracker.data.ReceiptRepository
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class ReceiptViewModel(private val receiptRepository: ReceiptRepository) : ViewModel() {
@@ -12,5 +13,9 @@ class ReceiptViewModel(private val receiptRepository: ReceiptRepository) : ViewM
         viewModelScope.launch {
             receiptRepository.insert(receipt)
         }
+    }
+
+    fun getAllReceipts() : Flow<List<Receipt>> {
+        return receiptRepository.getAllReceipts()
     }
 }
