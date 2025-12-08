@@ -9,12 +9,17 @@ import com.diffusion4812.receipttracker.ReceiptTrackerApplication
 object AppViewModelProvider {
     val Factory = viewModelFactory {
         initializer {
-            CameraPreviewViewModel(
+            CameraPreviewAndSaveViewModel(
                 receiptTrackerApplication().container.receiptRepository
             )
         }
         initializer {
-            ReceiptViewModel(
+            HomeViewModel(
+                receiptTrackerApplication().container.receiptRepository
+            )
+        }
+        initializer {
+            PicturePreviewAndSaveViewModel(
                 receiptTrackerApplication().container.receiptRepository
             )
         }

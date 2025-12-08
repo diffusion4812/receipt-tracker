@@ -7,14 +7,7 @@ import com.diffusion4812.receipttracker.data.ReceiptRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
-class ReceiptViewModel(private val receiptRepository: ReceiptRepository) : ViewModel() {
-
-    fun addReceipt(receipt: Receipt) {
-        viewModelScope.launch {
-            receiptRepository.insert(receipt)
-        }
-    }
-
+class HomeViewModel(private val receiptRepository: ReceiptRepository) : ViewModel() {
     fun getAllReceipts() : Flow<List<Receipt>> {
         return receiptRepository.getAllReceipts()
     }

@@ -44,6 +44,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.diffusion4812.receipttracker.R
 import com.diffusion4812.receipttracker.ui.navigation.NavigationDestination
+import com.diffusion4812.receipttracker.data.Receipt
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import kotlinx.coroutines.delay
@@ -57,8 +58,8 @@ object CameraPreviewDestination : NavigationDestination {
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun CameraPreviewScreen(
-    onNavigateToHomeScreen : () -> Unit,
-    viewModel: CameraPreviewViewModel,
+    onNavigateToPicturePreviewScreen : (String) -> Unit,
+    viewModel: CameraPreviewAndSaveViewModel,
     modifier: Modifier = Modifier
 ) {
     val permissionState = rememberMultiplePermissionsState(
@@ -68,7 +69,7 @@ fun CameraPreviewScreen(
     )
     if (permissionState.allPermissionsGranted) {
         CameraPreviewContent(
-            onNavigateToHomeScreen = onNavigateToHomeScreen,
+            onNavigateToPicturePreviewScreen = onNavigateToPicturePreviewScreen,
             viewModel,
             modifier)
     } else {
@@ -104,8 +105,8 @@ fun CameraPreviewScreen(
 
 @Composable
 fun CameraPreviewContent(
-    onNavigateToHomeScreen: () -> Unit,
-    viewModel: CameraPreviewViewModel,
+    onNavigateToPicturePreviewScreen: (String) -> Unit,
+    viewModel: CameraPreviewAndSaveViewModel,
     modifier: Modifier = Modifier,
     lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
 ) {
@@ -169,9 +170,9 @@ fun CameraPreviewContent(
                 Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                     Button(
                         onClick = {
-                            viewModel.takePhoto(
-                                onNavigateToHomeScreen,
-                                context.applicationContext
+                            viewModel.takePhotoAndSave(
+                                context.applicationContext,
+                                onNavigateToPicturePreviewScreen
                             )
                         }
                     ) {
