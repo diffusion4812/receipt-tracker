@@ -22,7 +22,12 @@ class ReceiptRepositoryImpl(private val receiptDao: ReceiptDao) : ReceiptReposit
     override fun getReceiptById(receiptId: Int): Flow<Receipt> {
         return receiptDao.getReceiptById(receiptId)
     }
+
     override fun getAllReceipts(): Flow<List<Receipt>> {
         return receiptDao.getAllReceipts()
+    }
+
+    override suspend fun deleteAllReceipts() {
+        receiptDao.deleteAllReceipts()
     }
 }

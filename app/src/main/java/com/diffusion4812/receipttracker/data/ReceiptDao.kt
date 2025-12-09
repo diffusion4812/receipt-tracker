@@ -27,4 +27,7 @@ interface ReceiptDao {
 
     @Query("SELECT * FROM receipts")
     fun getAllReceipts(): Flow<List<Receipt>>
+
+    @Query("DELETE FROM receipts")
+    suspend fun deleteAllReceipts()
 }

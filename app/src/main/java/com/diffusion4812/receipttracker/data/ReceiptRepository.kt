@@ -9,4 +9,5 @@ interface ReceiptRepository {
     fun getReceiptsForClaim(claimId: Int): Flow<List<Receipt>>
     fun getReceiptById(receiptId: Int): Flow<Receipt>
     fun getAllReceipts(): Flow<List<Receipt>>
+    suspend fun deleteAllReceipts()
 }

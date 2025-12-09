@@ -8,6 +8,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.diffusion4812.receipttracker.data.Receipt
 import com.diffusion4812.receipttracker.ui.AppViewModelProvider
 import com.diffusion4812.receipttracker.ui.CameraPicturePreviewDestination
 import com.diffusion4812.receipttracker.ui.CameraPicturePreviewScreen
@@ -15,7 +16,6 @@ import com.diffusion4812.receipttracker.ui.CameraPreviewDestination
 import com.diffusion4812.receipttracker.ui.CameraPreviewScreen
 import com.diffusion4812.receipttracker.ui.HomeDestination
 import com.diffusion4812.receipttracker.ui.HomeScreen
-import com.diffusion4812.receipttracker.data.Receipt
 import kotlinx.serialization.json.Json
 
 @Composable

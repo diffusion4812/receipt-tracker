@@ -1,12 +1,6 @@
 package com.diffusion4812.receipttracker.ui
 
-import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.ImageFormat
-import android.graphics.Rect
-import android.graphics.YuvImage
 import android.net.Uri
 import android.util.Log
 import androidx.camera.core.Camera
@@ -14,25 +8,22 @@ import androidx.camera.core.CameraControl
 import androidx.camera.core.CameraSelector.DEFAULT_BACK_CAMERA
 import androidx.camera.core.FocusMeteringAction
 import androidx.camera.core.ImageCapture
-import androidx.camera.core.ImageCapture.OutputFileOptions
 import androidx.camera.core.ImageCaptureException
+import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.core.SurfaceOrientedMeteringPointFactory
 import androidx.camera.core.SurfaceRequest
-import androidx.camera.core.ImageProxy
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.lifecycle.awaitInstance
 import androidx.compose.ui.geometry.Offset
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.diffusion4812.receipttracker.data.Receipt
 import com.diffusion4812.receipttracker.data.ReceiptRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.awaitCancellation
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -42,15 +33,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
-import java.io.ByteArrayOutputStream
 import java.io.File
 import java.net.URLEncoder
-import java.nio.ByteBuffer
-import java.util.concurrent.Executor
-import kotlin.time.Duration.Companion.seconds
 
 class CameraPreviewAndSaveViewModel(private val receiptRepository: ReceiptRepository) : ViewModel() {
-    // Used to set up a link between the Camera and your UI.
     private val _surfaceRequest = MutableStateFlow<SurfaceRequest?>(null)
     val surfaceRequest: StateFlow<SurfaceRequest?> = _surfaceRequest
 
@@ -112,13 +98,14 @@ class CameraPreviewAndSaveViewModel(private val receiptRepository: ReceiptReposi
                 override fun onCaptureSuccess(image: ImageProxy) {
                     CoroutineScope(Dispatchers.IO).launch {
                         try {
+                            // Save the image to a file
                             val byteArray = imageProxyToByteArray(image)
-
                             val outputDir = appContext.getExternalFilesDir(null)
                             val fileName = "receipt_${System.currentTimeMillis()}.jpg"
                             val file = File(outputDir, fileName)
                             file.writeBytes(byteArray)
 
+                            // Create the Receipt object
                             val receipt = Receipt(
                                 claimId = 0,
                                 receiptDate = System.currentTimeMillis(),
@@ -127,8 +114,9 @@ class CameraPreviewAndSaveViewModel(private val receiptRepository: ReceiptReposi
                                 imagePath = file.absolutePath
                             )
 
+                            // Convert the Receipt object to a JSON string
+                            // and navigate to the picture preview screen
                             val receiptJson = URLEncoder.encode(Json.encodeToString(receipt), "UTF-8")
-
                             withContext(Dispatchers.Main) {
                                 onNavigateToPicturePreviewScreen(receiptJson)
                             }

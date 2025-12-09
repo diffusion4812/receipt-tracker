@@ -19,8 +19,8 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
@@ -29,7 +29,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
@@ -47,13 +47,16 @@ object HomeDestination : NavigationDestination {
 @Composable
 fun HomeScreen(
     onNavigateToCameraPreviewScreen: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     Scaffold(
         topBar = {
             ReceiptTrackerTopAppBar(
                 title = stringResource(HomeDestination.titleRes),
-                canNavigateBack = false
+                claimTotal = viewModel.getClaimTotal(),
+                canNavigateBack = false,
+                onResetReceipts = { viewModel.resetReceipts() }
             )
         },
         floatingActionButton = {
@@ -64,7 +67,7 @@ fun HomeScreen(
         },
     ) { innerPadding ->
         ReceiptListScreen(
-            viewModel = viewModel(factory = AppViewModelProvider.Factory),
+            viewModel = viewModel,
             modifier = modifier.padding(innerPadding)
         )
     }
@@ -122,6 +125,39 @@ fun ReceiptListItem(
                 text = "Amount: \$${receipt.receiptAmount}",
                 style = MaterialTheme.typography.bodySmall,
                 color = Color.DarkGray
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun HomeScreenPreview() {
+    MaterialTheme {
+        Surface {
+            HomeScreen(
+                onNavigateToCameraPreviewScreen = {},
+                modifier = Modifier
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ReceiptListItemPreview() {
+    MaterialTheme {
+        Surface {
+            ReceiptListItem(
+                receipt = Receipt(
+                    claimId = 0,
+                    receiptId = 1,
+                    receiptDate = System.currentTimeMillis(),
+                    receiptDescription = "Office Supplies",
+                    receiptAmount = 45.99,
+                    imagePath = ""
+                ),
+                modifier = Modifier
             )
         }
     }

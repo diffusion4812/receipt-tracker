@@ -31,8 +31,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.diffusion4812.receipttracker.R
-import com.diffusion4812.receipttracker.ui.navigation.NavigationDestination
 import com.diffusion4812.receipttracker.data.Receipt
+import com.diffusion4812.receipttracker.ui.navigation.NavigationDestination
 
 object CameraPicturePreviewDestination : NavigationDestination {
     override val route = "camera_picture_preview/{receiptJson}"
